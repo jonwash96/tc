@@ -4,6 +4,11 @@ A lightweight utility for flexible type checking in JavaScript.
 
 ## Quick Reference
 
+1. Discover Mode: 	`typecheck( val )`
+2. Query Mode: 		`typecheck( val, type )`
+1. Options Mode: 	`typecheck( val, type, option )`
+
+
 ```javascript
 import typecheck as tc from './index'
 
@@ -58,9 +63,9 @@ const mapLog = (d) => d.forEach(v => printFlat(v));
 > // → throws RefError
 >```
 
-## MODE 1: Type Check Mode
+## MODE 1: Discover Mode
 
-Usage: `typecheck(val)`
+**Usage:** `typecheck(val)`
 
 `@param {*} val`
 Value to evaluate.
@@ -72,9 +77,9 @@ Value to evaluate.
 
 ***
 
-## MODE 2: Type Query Mode
+## MODE 2: Query Mode
 
-Usage: typecheck(val, type)
+**Usage:** `typecheck(val, type)`
 
 `@param {*} val`
   Value to evaluate.
@@ -99,7 +104,7 @@ Must be the 3rd parameter. Only one option allowed per call.
 ### Options:
 
 **c | compare**\
-Compare constructor types directly.
+Compare constructor types directly.\
 Usage: typecheck(val, val, 'c')
 
 `@returns {boolean}`
@@ -129,15 +134,21 @@ Performs multiple checks:
 
 \
 `@returns {string}`\
-Returns multiple results when inconsistencies are found.
+Returns list of results when tc type differs from js type.\
+Works with Discover mode (1) only.
 
 *Examples:*
 ```javascript
-typecheck( {}, null, 'e' )
-// → "object object-literal" 
+typecheck( "1,332", null, 'e' )
+// → "string int" 
 
-typecheck( null, null, 'e' ) 
-// → "null"
+typecheck( {} )				
+// → "object" 
+typecheck( {}, null, 'e' )	
+// → "object-literal" 
+
+typecheck( "4D", '', 'e' ) 
+// → "string"
 ```
 
 \
@@ -150,6 +161,9 @@ Same as extended mode, but returns all results as an array.
 ```javascript
 typecheck( '-42', null, 'e' ) 
 // → ['string', 'int']
+
+typecheck( '+120', null, 'e' ) 
+// → ['string']
 ```
 
 ***
@@ -161,11 +175,17 @@ A plain JavaScript object ({}), distinct from class instances.
 
 *Example:*
 ```javascript
+typeof new Map()
+// → 'object'
+
 typecheck( new Map(), 'object' ) 
 // → false
 
 typecheck( new Map() )
 // → 'map'
+
+typecheck( {}, null, 'e' )
+// → 'object-literal'
 ```
 
 ### primitive
@@ -175,14 +195,18 @@ Any JavaScript primitive type.
 Numeric-only values (string or number), including:
 - positive/negative integers
 - decimals
+- comma structured numbers
 
 *Examples:*
-- "-5" → digits
-- ".5" → digits
-- "+5" → string
+| val	 		|   | tc type		|
+| ------------- | - | ------------- |
+| "-5" 			| → | digits int	|
+| ".5" 			| → | digits float	|
+| "1,534,698" 	| → | digits int	|
+| "+5" 			| → | string		|
 
 ### numeric-string
-A string representing a valid number.
+A string representing a valid number.\
 Evluates the same as digits, only when val is a string.
 
 ### int
@@ -192,13 +216,28 @@ Integer values (string or number).
 Floating point values.
 
 *Examples:*
-- "0.0" → float
-- "-.0" → float
-- "0." → string
+| val	 		|   | tc type		|
+| ------------- | - | ------------- |
+| "0.0"			| → | float			|
+| -.0			| → | float			|
+| "1,698.121" 	| → | float			|
+| "0." 			| → | string		|
 
 ### Number
 Native JavaScript Number type.\
-*(float & int, not numeric-strings)*
+*(float & int; not numeric-strings)*
+
+*Example:*
+```javascript
+typecheck( 10, null, 'e' ) 
+// → 'number int'
+
+typecheck( Infinity )
+// → 'number'
+
+typecheck( Infinity, 'int' )
+// → false
+```
 
 ***
 

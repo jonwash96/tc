@@ -7,9 +7,6 @@
  * ****************************************************************************
 */
 
-const tc = typecheck;
-console.log(tc({}, '', 'a'))
-
 function isObjectLiteral (arg) {
 	return !(arg === null || typeof arg === 'undefined')
 		? arg.constructor.name === 'Object'
@@ -39,7 +36,7 @@ export default function typecheck(val, type, option) {
                     ? /^-?(?:\d+|\d{1,3}(?:,\d{3})+)\.\d+$/g.test(val)
                     : /^-?(?:\d+\.\d+|\.\d+)$/.test(val)
                 : false;
-	
+
 	const casein = (r) => r.test(type);
 	const caseis = (w) => w === (type);
 
@@ -53,32 +50,32 @@ export default function typecheck(val, type, option) {
 			type = type.toLowerCase()
 		else if (/^(c|compare)$/i.test(option))
 			return val.constructor.name === type.constructor.name
-		
+
 
 		//* Type Query Mode with extended types
 		if (type && typeof type === 'string') {
-            if (option && /^(p|proto|prototype)$/i.test(option)) 
+            if (option && /^(p|proto|prototype)$/i.test(option))
                 return Object.prototype.toString.call(val)
                     .split(' ')[1]
                     .toLowerCase()
                     .includes(type);
-        
+
 			if (caseis('null')) return val === null
 			else if (val === null) {
-				console.warn('tc got', null, 'checking for:', type); 
+				console.warn('tc got', null, 'checking for:', type);
 				return false
 			};
 
 			if (caseis('undefined')) return typeof val === 'undefined'
 			else if (typeof val === 'undefined') {
-				console.warn('tc got', undefined, 'checking for:', type); 
+				console.warn('tc got', undefined, 'checking for:', type);
 				return false
 			};
 
 			if (casein(/^(float|floating-?point|float-?string|digits)$/i))
 				return isFloat;
 
-			if (casein(/^(int|integer|digits)$/i)) 
+			if (casein(/^(int|integer|digits)$/i))
 				return isInt;
 
             if (caseis('NaN')) return Number.isNaN(val);
@@ -86,12 +83,12 @@ export default function typecheck(val, type, option) {
             if (casein(/^(num-?str|numeric-?string)$/))
                 return typeof val === 'string' && (isInt || isFloat);
 
-			if (casein(/^(str|string|num|number|bool|boolean|sym|symbol|arr|array|func|function|bigint|map|date|RegExp|error)$/i)) 
+			if (casein(/^(str|string|num|number|bool|boolean|sym|symbol|arr|array|func|function|bigint|map|date|RegExp|error)$/i))
 				return val.constructor.name.toLowerCase().startsWith(type);
 
 			if (caseis('primative')) return /string|number|boolean|bigint|symbol/i.test(typeof val);
 
-			/** Distinguish between object literal & other object types. 
+			/** Distinguish between object literal & other object types.
 				All objects return truthy; boolean for literal, number 1 for other */
 			if (casein(/^(obj|object|object-?literal)$/))
 				return isObjectLiteral(val)
@@ -102,7 +99,7 @@ export default function typecheck(val, type, option) {
 		else if (type && type !== 'string') {throw new Error("tc Error! <type> (2nd arg) must be string, or pass 3rd arg 'c|compare' for a type comparison. Got", typeof type, type)}
 		//* Type check Mode
 		else {
-            if (option && /^(p|proto|prototype)$/i.test(option)) 
+            if (option && /^(p|proto|prototype)$/i.test(option))
                 return Object.prototype.toString.call(val);
 
 			let result;
@@ -128,8 +125,8 @@ export default function typecheck(val, type, option) {
                         : result
                 );
 
-                extendedResult = result === 'object' 
-                    ? 'object-literal' 
+                extendedResult = result === 'object'
+                    ? 'object-literal'
                     : extendedResult;
 
                 return option.startsWith('a')
@@ -140,15 +137,15 @@ export default function typecheck(val, type, option) {
 		}
 
 	} catch (error) {
-		const nullOrUndefined = val === null 
+		const nullOrUndefined = val === null
 			? 'null'
-			: typeof val === 'undefined' 
+			: typeof val === 'undefined'
 				? 'undefined'
 				: console.error("tc Error. Got:", val, error);
 		return !type
 			? nullOrUndefined
-			: caseis('null') ? val === null 
-				: caseis('undefined') ? typeof val === 'undefined' 
+			: caseis('null') ? val === null
+				: caseis('undefined') ? typeof val === 'undefined'
 					: console.error("tc Error. Got:", val, error)
 	}
 }
