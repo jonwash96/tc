@@ -86,7 +86,7 @@ export default function typecheck(val, type, option) {
 			if (casein(/^(str|string|num|number|bool|boolean|sym|symbol|arr|array|func|function|bigint|map|date|RegExp|error)$/i))
 				return val.constructor.name.toLowerCase().startsWith(type);
 
-			if (caseis('primative')) return /string|number|boolean|bigint|symbol/i.test(typeof val);
+			if (caseis('primitive')) return /string|number|boolean|bigint|symbol/i.test(typeof val);
 
 			/** Distinguish between object literal & other object types.
 				All objects return truthy; boolean for literal, number 1 for other */
