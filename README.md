@@ -90,7 +90,8 @@ Value to evaluate.
 
 `@returns {boolean}`
 - true if match found
-- arrays return true if ANY type matches
+- arrays by default return true if ANY type matches
+	- use option 'every' for logical AND comparison
 
 ***
 
@@ -164,6 +165,27 @@ typecheck( '-42', null, 'e' )
 
 typecheck( '+120', null, 'e' ) 
 // → ['string']
+```
+
+\
+**every | some**\
+*In multi-query mode (when `type` is an array)*\
+Returns true if either *some* OR *every* query matches.\
+Default = some
+
+`@returns {boolean}`
+
+*Examples:*
+```javascript
+typecheck('45', ['str', 'int', 'num', 'float']) // default = 'some'
+// → true
+
+typecheck('45', ['str', 'int', 'num', 'float'], 'every')
+// → false 
+// (neither a number nor a float)
+
+typecheck('45', 'num-str') && typecheck('45', 'int')
+// → true
 ```
 
 ***
