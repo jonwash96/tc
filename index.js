@@ -30,7 +30,7 @@ export default function typecheck(val, type, option) {
                 : false;
 
 	const isFloat = typeof val === 'number'
-            ? val % 1 === 0
+            ? val % 1 !== 0
             : typeof val === 'string'
                 ? val.includes(',')
                     ? /^-?(?:\d+|\d{1,3}(?:,\d{3})+)\.\d+$/g.test(val)
