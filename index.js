@@ -86,7 +86,7 @@ export default function typecheck(val, type, option) {
 			if (casein(/^(num-?str|numeric-?string)$/))
 				return typeof val === 'string' && (isInt || isFloat);
 
-			if (casein(/^(str|string|num|number|bool|boolean|sym|symbol|arr|array|func|function|bigint|date|RegExp|error)$/i))
+			if (casein(/^(str|string|num|number|bool|boolean|sym|symbol|arr|array|func|function|bigint|date|RegExp|error|promise)$/i))
 				return val.constructor.name.toLowerCase().startsWith(type);
 
 			if (casein(/^(map|tupple)$/))
