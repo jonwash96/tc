@@ -7,18 +7,15 @@
  * ****************************************************************************
 */
 
-const isObjectLiteral = (arg) =>
-	!(arg === null || typeof arg === 'undefined')
-		? arg.constructor.name === 'Object'
-		: false;
-
-const extractProto = (val) =>
-	Object.prototype.toString.call(val)
-		.split(' ')[1]
-		.slice(0, -1)
-		.toLowerCase();
-
-		
+/**
+ * Expanded type checking. i.e. tc(myObj):String | tc([], 'object'):Boolean (= false) | tc(myObj, null, 'p'):String.
+ * 
+ * 'tc types' include: 'object' = object-literal only, digit|float|int|num, str|string, Map, error, etc.
+ * @param {*} val - Mode 1: The value you want to check.
+ * @param {String|Array} [type] - Mode 2: Check if 'val' is tc 'type'. Pass an array to check if 'val' is any of 'types' in array.
+ * @param {String} [option] - Mode 3: 'c|compare': Check if 2 vals have same constructor. 'p|prototype': Tests against 'Object.prototype.toString.call(val)' (ignores tc custom types)
+ * @returns {String|Boolean} Mode 1: String. Mode 2: Boolean. Mode 3: c=Boolean|p=String
+ */
 export default function typecheck(val, type, option) {
 	const isInt = typeof val === 'number'
 		? val % 1 === 0
@@ -155,4 +152,18 @@ export default function typecheck(val, type, option) {
 				: caseis('undefined') ? typeof val === 'undefined'
 					: console.error("tc Error. Got:", val, error)
 	}
+}
+
+
+function isObjectLiteral(arg) {
+	return !(arg === null || typeof arg === 'undefined')
+		? arg.constructor.name === 'Object'
+		: false;
+}
+
+function extractProto(val) {
+	return Object.prototype.toString.call(val)
+		.split(' ')[1]
+		.slice(0, -1)
+		.toLowerCase();
 }
